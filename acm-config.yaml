@@ -1,0 +1,30 @@
+Config:
+  Endpoint: acm.aliyun.com:8080
+  AccessKey: your access key
+  SecretKey: your secret key
+
+Namespace:
+
+  # custom develop namespace
+  develop:
+    Id: your namespace id
+    List:
+      - DataId: data id
+        Group: group
+        Filename: /example/develop/your-sync-config-file-name
+
+  # custom beta namespace
+  beta:
+    Id: your namespace id
+    List:
+      - DataId: data id
+        Group: group
+        Filename: /example/beta/your-sync-config-file-name
+
+  # custom product namespace
+  product:
+    Id: your namespace id
+    List:
+      - DataId: data id
+        Group: group
+        Filename: /example/product/your-sync-config-file-name
