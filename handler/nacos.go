@@ -34,11 +34,12 @@ func NewNacosConf(item AcmConfigItem) (*NacosConf, error) {
 // 监听配置
 func (nc *NacosConf) ListenConfig(list []AcmNamespaceItem,fun func(data string, index int)) {
 	for index, item := range list {
+		i := index
 		err := nc.cli.ListenConfig(vo.ConfigParam{
 			DataId: item.DataId,
 			Group:  item.Group,
 			OnChange: func(namespace, group, dataId, data string) {
-				fun(data,index)
+				fun(data,i)
 			},
 		})
 		if err != nil {

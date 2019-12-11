@@ -52,19 +52,18 @@ func init() {
 }
 
 func runCmd(cmd *cobra.Command, args []string) {
-  log.Println(flags.sync, flags.restful)
-
   if flags.sync {
+    log.Println("已开启自动同步配置")
     listenConfig()
   }
   if flags.restful {
+    log.Println("已开启restful")
     controller.ListenServer()
   }
   log.Println("运行已停止，请检查运行参数")
 }
 // 监听 acm 配置
 func listenConfig() {
-  log.Println(handler.AcmCfg)
   item := handler.StuffConfigItem(handler.AcmConfigItem{})
   conf ,err := handler.NewNacosConf(item)
   if err != nil {
