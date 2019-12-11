@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"acm-cli/utils"
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
@@ -56,11 +57,12 @@ func (nc *NacosConf) PublishConfig(content string) (bool, error) {
 	})
 }
 // 读取配置
-func (nc *NacosConf) GetConfig() (string, error) {
-	return nc.cli.GetConfig(vo.ConfigParam{
+func (nc *NacosConf) GetConfig() (content string,token string,err error) {
+	content, err = nc.cli.GetConfig(vo.ConfigParam{
 		DataId: nc.configItem.DataId,
 		Group:  nc.configItem.Group,
 	})
+	return content, utils.Md5(content), err
 }
 // 删除配置
 func (nc *NacosConf) DelConfig() (bool, error) {
