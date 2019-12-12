@@ -66,12 +66,20 @@ Flags:
 ```
 
 `--restful=true` 监听端口`10010`, 支持动态设置配置, 实现动态服务注册功能
+
+默认请求参数:
+
+| 参数名  | 类型   | 说明                                            |
+| ------- | ------ | ----------------------------------------------- |
+| data_id | string | [配置集ID](https://help.aliyun.com/document_detail/59968.html?spm=5176.acm.0.0.56204a9bNqwmrE#h2-url-9) |
+| group   | string | [配置分组](https://help.aliyun.com/document_detail/59968.html?spm=5176.acm.0.0.56204a9bNqwmrE#h2-url-10) |
+
 * 读取配置
-> GET  `localhost:10010/config?data_id={data_id}&group={group}`
+> GET  `/config`
 > Response Header 中返回 `Content-Token`
 
 * 写入配置
-> POST  `localhost:10010/config`
+> POST  `/config`
 
 | 参数名  | 类型   | 说明                                            |
 | ------- | ------ | ----------------------------------------------- |
@@ -80,6 +88,6 @@ Flags:
 
 * 删除配置
 
-> DELETE `localhost:10010/config?data_id={data_id}&group={group}`
+> DELETE `/config`
 
   
