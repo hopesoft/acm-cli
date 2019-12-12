@@ -9,17 +9,11 @@ import (
 
 var AcmVersion string = "v0.0.1(beta)";
 
-// ACM 配置的秘钥等信息
-type AcmSecret struct {
+type AcmConf struct{
 	Endpoint	string
 	AccessKey	string
 	SecretKey	string
-}
-type AcmConfigItem struct {
-	AcmSecret
 	NamespaceId	string
-	DataId	string
-	Group	string
 }
 
 type AcmNamespaceItem struct {
@@ -30,7 +24,11 @@ type AcmNamespaceItem struct {
 
 // 配置文件结构
 type AcmConfigTemplate struct {
-	Config 	AcmSecret
+	Config 	struct{
+		Endpoint	string
+		AccessKey	string
+		SecretKey	string
+	}
 	Namespace 	map[string]struct{
 		Id		string
 		List 	[]AcmNamespaceItem
@@ -38,8 +36,7 @@ type AcmConfigTemplate struct {
 }
 // 选中的配置数据
 type AcmActiveConfig struct {
-	AcmSecret
-	NamespaceId	string
+	AcmConf
 	List		[]AcmNamespaceItem
 }
 
@@ -78,11 +75,4 @@ func SetEnv(str string) {
 		val:= strings.Split(str, "=")
 		AcmEnv[val[0]] = val[1]
 	}
-}
-
-// 填充配置参数项
-func StuffConfigItem(item AcmConfigItem) AcmConfigItem {
-	item.AcmSecret = AcmCfg.AcmSecret
-	item.NamespaceId = AcmCfg.NamespaceId
-	return item
 }

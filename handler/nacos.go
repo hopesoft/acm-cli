@@ -10,33 +10,38 @@ import (
 )
 
 type NacosConf struct {
-	cli 		config_client.IConfigClient
-	configItem 	AcmConfigItem
+	cli  config_client.IConfigClient
+	Conf AcmConf
 }
 
-func NewNacosConf(item AcmConfigItem) (*NacosConf, error) {
+func NewNacosConf() *NacosConf {
+	return &NacosConf{
+		Conf: AcmCfg.AcmConf,
+	}
+}
+
+func (nc *NacosConf) CreateClient() (config_client.IConfigClient, error) {
 	config := constant.ClientConfig{
 		TimeoutMs:            5 * 1000,
 		ListenInterval:       30 * 1000,
-		NamespaceId:          item.NamespaceId,
-		Endpoint:             item.Endpoint,
-		AccessKey:            item.AccessKey,
-		SecretKey:            item.SecretKey,
+		NamespaceId:          nc.Conf.NamespaceId,
+		Endpoint:             nc.Conf.Endpoint,
+		AccessKey:            nc.Conf.AccessKey,
+		SecretKey:            nc.Conf.SecretKey,
 	}
-	cli, err := clients.CreateConfigClient(map[string]interface{}{
+	return clients.CreateConfigClient(map[string]interface{}{
 		"clientConfig": config,
 	})
-
-	return &NacosConf{
-		cli:cli,
-		configItem:item,
-	}, err
 }
 // 监听配置
 func (nc *NacosConf) ListenConfig(list []AcmNamespaceItem,fun func(data string, index int)) {
 	for index, item := range list {
 		i := index
-		err := nc.cli.ListenConfig(vo.ConfigParam{
+		cli,err := nc.CreateClient()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		err = cli.ListenConfig(vo.ConfigParam{
 			DataId: item.DataId,
 			Group:  item.Group,
 			OnChange: func(namespace, group, dataId, data string) {
@@ -49,25 +54,32 @@ func (nc *NacosConf) ListenConfig(list []AcmNamespaceItem,fun func(data string, 
 	}
 }
 // 添加配置
-func (nc *NacosConf) PublishConfig(content string) (bool, error) {
+func (nc *NacosConf) PublishConfig(dataId, group, content string) (bool, error) {
+	if nc.cli == nil {
+		cli,err := nc.CreateClient()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		nc.cli = cli
+	}
 	return nc.cli.PublishConfig(vo.ConfigParam{
-		DataId:  nc.configItem.DataId,
-		Group:   nc.configItem.Group,
+		DataId:  dataId,
+		Group:   group,
 		Content: content,
 	})
 }
 // 读取配置
-func (nc *NacosConf) GetConfig() (content string,token string,err error) {
+func (nc *NacosConf) GetConfig(dataId, group string) (content string,token string,err error) {
 	content, err = nc.cli.GetConfig(vo.ConfigParam{
-		DataId: nc.configItem.DataId,
-		Group:  nc.configItem.Group,
+		DataId: dataId,
+		Group:  group,
 	})
 	return content, utils.Md5(content), err
 }
 // 删除配置
-func (nc *NacosConf) DelConfig() (bool, error) {
+func (nc *NacosConf) DelConfig(dataId, group string) (bool, error) {
 	return nc.cli.DeleteConfig(vo.ConfigParam{
-		DataId:   nc.configItem.DataId,
-		Group:    nc.configItem.Group,
+		DataId: dataId,
+		Group:  group,
 	})
 }

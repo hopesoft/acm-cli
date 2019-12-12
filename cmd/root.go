@@ -64,11 +64,7 @@ func runCmd(cmd *cobra.Command, args []string) {
 }
 // 监听 acm 配置
 func listenConfig() {
-  item := handler.StuffConfigItem(handler.AcmConfigItem{})
-  conf ,err := handler.NewNacosConf(item)
-  if err != nil {
-    log.Fatal(err)
-  }
+  conf := handler.NewNacosConf()
   conf.ListenConfig(handler.AcmCfg.List,
     func(data string, index int) {
       err := ioutil.WriteFile(handler.AcmCfg.List[index].Filename, []byte(data), 0666)
