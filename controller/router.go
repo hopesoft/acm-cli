@@ -16,7 +16,7 @@ func routers(ctrl *Controller) []Route {
 	return []Route{
 		{"/config", "GET", ctrl.Get},
 		{"/config", "POST", ctrl.Set},
-		{"/config", "Del", ctrl.Del},
+		{"/config", "DELETE", ctrl.Del},
 		{"/version", "GET", ctrl.Version},
 	}
 }
